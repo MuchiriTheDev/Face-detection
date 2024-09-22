@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import Particles from "react-particles";
-import { loadSlim } from "tsparticles-slim"; // Ensure you have this package installed
+import { loadSlim } from "tsparticles-slim";
 import Navbar from "./Components/Navbar/Navbar";
 import Logo from "./Components/Logo/Logo";
 import Link from "./Components/Link/Link";
@@ -36,9 +36,7 @@ const particleOptions = {
     },
   },
   particles: {
-    color: {
-      value: "#ffffff",
-    },
+    color: { value: "#ffffff" },
     links: {
       color: "#ffffff",
       distance: 150,
@@ -49,29 +47,16 @@ const particleOptions = {
     move: {
       direction: "none",
       enable: true,
-      outModes: {
-        default: "bounce",
-      },
-      random: false,
+      outModes: { default: "bounce" },
       speed: 5,
-      straight: false,
     },
     number: {
-      density: {
-        enable: true,
-        area: 900,
-      },
+      density: { enable: true, area: 900 },
       value: 125,
     },
-    opacity: {
-      value: 0.5,
-    },
-    shape: {
-      type: "circle",
-    },
-    size: {
-      value: { min: 1, max: 5 },
-    },
+    opacity: { value: 0.5 },
+    shape: { type: "circle" },
+    size: { value: { min: 1, max: 5 } },
   },
   detectRetina: true,
 };
@@ -91,16 +76,10 @@ const App = () => {
   const [clicked, setClicked] = useState(false);
 
   const onLoadUser = (info) => {
-    setUser({
-      id: info.id,
-      name: info.name,
-      email: info.email,
-      entries: info.entries,
-      joined: info.joined,
-    });
+    setUser(info);
   };
 
-  const PAT = 'f6323bb144bf4318aa81773382463ed1';
+  const PAT = 'f6323bb144bf4318aa81773382463ed1'; // Replace with your actual key
   const USER_ID = 'clarifai';
   const APP_ID = 'main';
   const MODEL_ID = 'face-detection';
@@ -108,10 +87,6 @@ const App = () => {
 
   const calculateFaceLocation = (data) => {
     const regions = data.outputs[0].data.regions;
-    const outputs = data.outputs
-    console.log("Model-data", data)
-    console.log("Outpu of the data", outputs);
-    
     const inputImg = document.getElementById("input-image");
     const width = Number(inputImg.width);
     const height = Number(inputImg.height);
@@ -125,57 +100,53 @@ const App = () => {
   };
 
   const onSearchInput = (evt) => {
-    setImageUrl(evt.target.value)
-    if(evt.target.value === ""){
-      setClicked(false)
-    }
+    setImageUrl(evt.target.value);
+    setClicked(evt.target.value !== "");
   };
-  useEffect(()=>{
+
+  useEffect(() => {
     fetch("http://localhost:3000")
-    .then(resp => resp.json())
-    .then(console.log)
-  }, [])
+      .then(resp => resp.json())
+      .then(console.log)
+      .catch(err => console.error("Error fetching data:", err));
+  }, []);
 
   const onButtonClick = () => {
-    setClicked(true)
+    setClicked(true);
     fetch(`https://api.clarifai.com/v2/models/${MODEL_ID}/versions/${MODEL_VERSION_ID}/outputs`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Authorization':`Key ${PAT}`,
+        'Authorization': `Key ${PAT}`,
       },
       body: JSON.stringify({
         "user_app_id": {
           "user_id": USER_ID,
           "app_id": APP_ID,
         },
-        "inputs": [
-          {
-            "data": {
-              "image": {
-                "url": imageUrl,
-              },
-            },
-          },
-        ],
+        "inputs": [{ "data": { "image": { "url": imageUrl } } }],
       }),
     })
-      .then(response => response.json())
-      .then(result => {
-        if (result.outputs) {
-          const boxes = calculateFaceLocation(result);
-          setBox(boxes);
-          fetch('http://localhost:3000/image', {
-            method: 'put',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: user.id }),
-          })
-            .then(resp => resp.json())
-            .then(count => setUser({ ...user, entries: count }))
-            .catch(console.log);
-        }
-      })
-      .catch(error => console.log('error', error));
+    .then(response => response.json())
+    .then(result => {
+      if (result.outputs) {
+        const boxes = calculateFaceLocation(result);
+        setBox(boxes);
+        updateEntries();
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  };
+
+  const updateEntries = () => {
+    fetch('http://localhost:3000/image', {
+      method: 'put',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: user.id }),
+    })
+    .then(resp => resp.json())
+    .then(count => setUser(prevUser => ({ ...prevUser, entries: count })))
+    .catch(err => console.error("Error updating entries:", err));
   };
 
   const particlesInit = useCallback(async (engine) => {
@@ -183,13 +154,10 @@ const App = () => {
   }, []);
 
   const onRouteChange = (route) => {
-    if (route === "signing") {
-      setSignedIn(false);
-    } else if (route === "home") {
-      setSignedIn(true);
-      setImageUrl('');
-    }
     setRoute(route);
+    setSignedIn(route === "home");
+    if (route === "home") setImageUrl('');
+    if (route === "signing") setSignedIn(false);
   };
 
   return (
@@ -203,12 +171,10 @@ const App = () => {
           <Link onsearch={onSearchInput} clicked={onButtonClick} />
           <Faces clicked={clicked} image={imageUrl} size={box} />
         </>
+      ) : route === "register" ? (
+        <Register checkUser={setUser} loadUser={onLoadUser} check={onRouteChange} />
       ) : (
-        route === "register" ? (
-          <Register checkUser={setUser} loadUser={onLoadUser} check={onRouteChange} />
-        ) : (
-          <Signing checkUser={setUser} check={onRouteChange} />
-        )
+        <Signing checkUser={setUser} check={onRouteChange} />
       )}
     </div>
   );
