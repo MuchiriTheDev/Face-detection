@@ -1,0 +1,11 @@
+*{
+  margin: 0;
+  padding: 0;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+body{
+  background: linear-gradient(89deg , #ff3cd8 0%, #04c8de 100%) !important;
+}
+button{
+  cursor: pointer;
+}

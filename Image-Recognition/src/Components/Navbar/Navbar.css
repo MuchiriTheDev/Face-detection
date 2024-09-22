@@ -1,0 +1,33 @@
+.navbar{
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    z-index: 10;
+}
+.link{
+    color: black;
+    font-size: 25px;
+    padding: 5px;
+    padding-right: 110px;
+    text-decoration: underline !important;
+    transition: all .15s;
+}
+.link:hover{
+    color: grey;
+}
+@media (max-width: 800px) {
+    .navbar{
+        padding-right: 5px;
+    }
+    .link{
+        font-size: 18px;
+        padding-right: 80px;
+    }
+}
+@media (max-width: 800px) {
+    .link{
+        font-size: 15px;
+        padding-right: 60px;
+    }
+}

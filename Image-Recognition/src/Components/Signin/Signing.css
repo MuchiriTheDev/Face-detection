@@ -1,0 +1,16 @@
+.center{
+    margin-top: 50px;
+    height: 70vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+}
+.alert{
+    font-size: 15px;
+    font-weight: 1000;
+    color: #680202;
+    margin: 20px 0;
+}

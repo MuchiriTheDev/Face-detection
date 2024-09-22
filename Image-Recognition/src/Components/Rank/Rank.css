@@ -1,0 +1,36 @@
+.rank{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.one{
+    color: white;
+    font-weight: 600;
+    font-size: 25px;
+}
+.two{
+    color: white;
+    font-weight: 800;
+    font-size: 30px;
+}
+@media (max-width: 800px) {
+    .one{
+        font-size: 18px;
+        padding-bottom: 10px;
+    }
+    .two{
+        font-size: 23px;
+        padding-bottom: 10px;
+    }
+}
+@media (max-width: 500px) {
+    .one{
+        font-size: 15px;
+        padding-bottom: 10px;
+    }
+    .two{
+        font-size: 18px;
+        padding-bottom: 10px;
+    }
+}
