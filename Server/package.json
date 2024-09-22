@@ -1,5 +1,5 @@
 {
-  "name": "image-recognition-server",
+  "name": "server",
   "version": "1.0.0",
   "main": "api/index.js",
   "scripts": {
